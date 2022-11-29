@@ -21,9 +21,11 @@
     "next": "13.0.5",
     "react": "18.2.0",
     "react-dom": "18.2.0",
+    "react-tag-autocomplete": "^6.3.0",
     "typescript": "4.9.3"
   },
   "devDependencies": {
+    "@types/react-tag-autocomplete": "^6.3.0",
     "eslint-config-prettier": "^8.5.0"
   }
 }
