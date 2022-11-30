@@ -24,7 +24,13 @@ export default function Home() {
       </Head>
       <main>
         <Center w={'100vw'} h={'100vh'} flexDirection="column">
-          <Button onClick={onOpen} mb={10}>
+          <Button
+            onClick={onOpen}
+            mb={10}
+            bg="grey.200"
+            color="grey.800"
+            _hover={{ bg: '#404055' }}
+          >
             Invite teammates
           </Button>
         </Center>
@@ -32,18 +38,9 @@ export default function Home() {
       <Modal isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
         <ModalContent bg="brand.bg">
-          <ModalHeader>Modal Title</ModalHeader>
-          <ModalCloseButton />
           <ModalBody>
             <Invite />
           </ModalBody>
-
-          <ModalFooter>
-            <Button colorScheme="blue" mr={3} onClick={onClose}>
-              Close
-            </Button>
-            <Button variant="ghost">Secondary Action</Button>
-          </ModalFooter>
         </ModalContent>
       </Modal>
     </div>

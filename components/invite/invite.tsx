@@ -56,7 +56,6 @@ export const Invite = () => {
   const debouncedHandleInputChange = debounce(handleInputChange, 200);
   return (
     <ComboboxStyles>
-      <h1>{suggestions.length}</h1>
       <ReactTags
         ref={reactTags as any}
         tags={tags}
