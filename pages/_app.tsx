@@ -9,10 +9,8 @@ import { m } from 'framer-motion';
 // 2. Extend the theme to include custom colors, fonts, etc
 const colors = {
   brand: {
-    grey: {
-      200: '#47475E',
-      800: '#E7ECF0',
-    },
+    bg: '#272D45',
+    secondary: '#EE748F',
   },
 };
 

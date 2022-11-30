@@ -1,39 +1,19 @@
-import { Box, Button, Center } from '@chakra-ui/react';
+import {
+  Button,
+  Center,
+  ModalBody,
+  ModalCloseButton,
+  ModalFooter,
+  ModalHeader,
+  useDisclosure,
+} from '@chakra-ui/react';
 import Head from 'next/head';
-import { useCallback, useRef, useState } from 'react';
-import ReactTags, { Tag } from 'react-tag-autocomplete';
-import { ComboboxStyles } from './Combobox.styled';
 
-type CustomTag = Tag & { value: string; type: 'email' | 'user' };
+import { Modal, ModalContent, ModalOverlay } from '@chakra-ui/react';
+import { Invite } from '../components/invite/invite';
 
 export default function Home() {
-  const [tags, setTags] = useState<CustomTag[]>([]);
-
-  const [suggestions, setSuggestions] = useState<CustomTag[]>([
-    {
-      id: 1,
-      name: 'maciej@gmail.com',
-      value: 'maciej@gmail.com',
-      type: 'email',
-    },
-    { id: 2, name: 'Karolina', value: 'karolina@gmail.com', type: 'user' },
-  ]);
-
-  const reactTags = useRef();
-
-  const onDelete = useCallback(
-    tagIndex => {
-      setTags(tags.filter((_, i) => i !== tagIndex));
-    },
-    [tags],
-  );
-
-  const onAddition = useCallback(
-    newTag => {
-      setTags([...tags, newTag]);
-    },
-    [tags],
-  );
+  const { isOpen, onOpen, onClose } = useDisclosure();
 
   return (
     <div>
@@ -44,33 +24,28 @@ export default function Home() {
       </Head>
       <main>
         <Center w={'100vw'} h={'100vh'} flexDirection="column">
-          <Button mb={10}>Invite teammates</Button>
-          <Box width={'400px'}>
-            <ComboboxStyles>
-              <ReactTags
-                ref={reactTags}
-                tags={tags}
-                placeholderText="Search names or emails..."
-                suggestions={suggestions}
-                onDelete={onDelete}
-                onAddition={onAddition}
-                suggestionComponent={({ item, query }) => {
-                  return (
-                    <span
-                      id={`$${item.id}`}
-                      className={item.name === query ? 'match' : 'no-match'}
-                    >
-                      {item.type}
-                      {` - `}
-                      {item.name}
-                    </span>
-                  );
-                }}
-              />
-            </ComboboxStyles>
-          </Box>
+          <Button onClick={onOpen} mb={10}>
+            Invite teammates
+          </Button>
         </Center>
       </main>
+      <Modal isOpen={isOpen} onClose={onClose}>
+        <ModalOverlay />
+        <ModalContent bg="brand.bg">
+          <ModalHeader>Modal Title</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            <Invite />
+          </ModalBody>
+
+          <ModalFooter>
+            <Button colorScheme="blue" mr={3} onClick={onClose}>
+              Close
+            </Button>
+            <Button variant="ghost">Secondary Action</Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
     </div>
   );
 }

@@ -1,5 +1,6 @@
 import { Box } from '@chakra-ui/react';
 import React from 'react';
+import { readBuilderProgram } from 'typescript';
 
 type Props = {
   children?: React.ReactNode;
@@ -35,9 +36,10 @@ export const ComboboxStyles: React.FC<Props> = ({ children }) => (
     sx={{
       '.react-tags': {
         position: 'relative',
-        padding: '6px 0 0 6px',
-        border: '1px solid #D1D1D1',
-        borderRadius: '1px',
+        padding: '10px 16px',
+        background: '#202437',
+        border: '1px solid #383C56',
+        borderRadius: '10px',
         /* shared font styles */
         fontSize: '1em',
         lineHeight: '1.2',
@@ -84,14 +86,16 @@ export const ComboboxStyles: React.FC<Props> = ({ children }) => (
           display: 'inline-block',
 
           /* match tag layout */
-          padding: '7px 2px',
-          marginBottom: '6px',
+          // padding: '7px 2px',
+          // marginBottom: '6px',
 
           /* prevent autoresize overflowing the container */
           maxWidth: '100%',
         },
 
         '&__search-input': {
+          color: '#DBE1E6',
+
           /* prevent autoresize overflowing the container */
           maxWidth: '100%',
 
@@ -100,6 +104,7 @@ export const ComboboxStyles: React.FC<Props> = ({ children }) => (
           padding: '0',
           border: '0',
           outline: 'none',
+          background: 'none',
 
           /* match the font styles */
           fontSize: 'inherit',
@@ -107,6 +112,10 @@ export const ComboboxStyles: React.FC<Props> = ({ children }) => (
 
           '&::-ms-clear': {
             display: 'none',
+          },
+
+          '&::placeholder': {
+            color: 'rgba(255, 255, 255, 0.3)',
           },
         },
 
