@@ -1,15 +1,6 @@
-import {
-  Button,
-  Center,
-  ModalBody,
-  ModalCloseButton,
-  ModalFooter,
-  ModalHeader,
-  useDisclosure,
-} from '@chakra-ui/react';
+import { Button, Center, useDisclosure } from '@chakra-ui/react';
 import Head from 'next/head';
 
-import { Modal, ModalContent, ModalOverlay } from '@chakra-ui/react';
 import { Invite } from '../components/invite/invite';
 
 export default function Home() {
@@ -24,25 +15,13 @@ export default function Home() {
       </Head>
       <main>
         <Center w={'100vw'} h={'100vh'} flexDirection="column">
-          <Button
-            onClick={onOpen}
-            mb={10}
-            bg="grey.200"
-            color="grey.800"
-            _hover={{ bg: '#404055' }}
-          >
+          <Button onClick={onOpen} variant="secondary" size="medium">
             Invite teammates
           </Button>
         </Center>
       </main>
-      <Modal isOpen={isOpen} onClose={onClose}>
-        <ModalOverlay />
-        <ModalContent bg="brand.bg">
-          <ModalBody>
-            <Invite />
-          </ModalBody>
-        </ModalContent>
-      </Modal>
+
+      <Invite isOpen={isOpen} onClose={onClose} />
     </div>
   );
 }
