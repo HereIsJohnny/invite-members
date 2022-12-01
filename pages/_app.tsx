@@ -20,6 +20,11 @@ const colors = {
     800: '#E7ECF0',
     900: '#8C9DB5',
   },
+  darkGrey: {
+    100: '#202437',
+    200: '#383C56',
+  },
+  red: '#EE748F',
 };
 
 const fonts = {

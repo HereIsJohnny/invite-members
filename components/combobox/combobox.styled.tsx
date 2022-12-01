@@ -1,6 +1,5 @@
 import { Box } from '@chakra-ui/react';
 import React from 'react';
-import { readBuilderProgram } from 'typescript';
 
 type Props = {
   children?: React.ReactNode;
@@ -33,12 +32,13 @@ type Props = {
 
 export const ComboboxStyles: React.FC<Props> = ({ children }) => (
   <Box
+    width={'100%'}
     sx={{
       '.react-tags': {
         position: 'relative',
-        padding: '10px 16px',
-        background: '#202437',
-        border: '1px solid #383C56',
+        padding: '10px 10px',
+        background: 'var(--chakra-colors-darkGrey-100)',
+        border: '1px solid var(--chakra-colors-darkGrey-200)',
         borderRadius: '10px',
         /* shared font styles */
         fontSize: '1em',
@@ -54,36 +54,10 @@ export const ComboboxStyles: React.FC<Props> = ({ children }) => (
           display: 'inline',
         },
 
-        '&__selected-tag': {
-          display: 'inline-block',
-          boxSizing: 'border-box',
-          margin: '0 6px 6px 0',
-          padding: '6px 8px',
-          border: '1px solid #D1D1D1',
-          borderRadius: '2px',
-          background: ' #F1F1F1',
-
-          /* match the font styles */
-          fontSize: 'inherit',
-          lineHeight: 'inherit',
-
-          '&:after': {
-            content: '"\2715"',
-            color: '#AAA',
-            marginLeft: '8px',
-          },
-
-          '&:hover': {
-            borderColor: '#B1B1B1',
-          },
-
-          '&:focus': {
-            borderColor: '#B1B1B1',
-          },
-        },
-
         '&__search': {
           display: 'inline-block',
+          position: 'relative',
+          width: '100%',
 
           /* match tag layout */
           // padding: '7px 2px',
@@ -121,31 +95,39 @@ export const ComboboxStyles: React.FC<Props> = ({ children }) => (
 
         '&__suggestions': {
           position: 'absolute',
+          marginTop: '10px',
           top: '100%',
           left: '0',
           width: '100%',
 
           ul: {
-            margin: '4px -1px',
+            margin: '4px -10px',
             padding: '0',
             listStyle: 'none',
-            background: 'white',
-            border: '1px solid #D1D1D1',
-            borderRadius: '2px',
+            background: 'var(--chakra-colors-darkGrey-100)',
+            border: '1px solid #B1B1B1',
+            borderRadius: '10px',
             boxShadow: '0 2px 6px rgba(0, 0, 0, 0.2)',
+            overflow: 'hidden',
           },
 
           li: {
-            borderBottom: '1px solid #ddd',
+            // borderBottom: '1px solid #ddd',
             padding: '6px 8px',
+            // background: 'var(--chakra-colors-darkGrey-100)',
+            borderBottom: '1px solid var(--chakra-colors-darkGrey-200)',
 
             '&:hover': {
               cursor: 'pointer',
-              background: '#eee',
+              // color: 'green!important',
+              background: 'var(--chakra-colors-darkGrey-200)',
+              // background: 'var(--chakra-colors-darkGrey-100)',
             },
 
             '&.is-active': {
-              background: '#b7cfe0',
+              // background: 'white',
+              background: 'var(--chakra-colors-darkGrey-200)',
+              color: 'green!important',
             },
 
             '&.is-disabled': {
@@ -163,7 +145,7 @@ export const ComboboxStyles: React.FC<Props> = ({ children }) => (
       },
       '@media screen and (min-width: 30em)': {
         '.react-tags__search': { position: 'relative' },
-        '.react-tags__suggestions': { width: '240px' },
+        // '.react-tags__suggestions': { width: '240px' },
       },
     }}
   >

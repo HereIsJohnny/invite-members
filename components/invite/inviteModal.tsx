@@ -1,6 +1,4 @@
 import {
-  Avatar,
-  Box,
   Button,
   Flex,
   Heading,
@@ -9,20 +7,19 @@ import {
   ModalContent,
   ModalOverlay,
   Text,
-  useDisclosure,
 } from '@chakra-ui/react';
-import { useCallback, useRef, useState } from 'react';
+import debounce from 'lodash.debounce';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import ReactTags, { Tag } from 'react-tag-autocomplete';
-import { validateEmail } from '../../utils/validateEmail';
-import { ComboboxStyles } from '../combobox/combobox.styled';
-import { EmailIcon } from './emailIcon';
 import { v4 as uuidv4 } from 'uuid';
 import { getUsers } from '../../services/userService';
-import debounce from 'lodash.debounce';
+import { validateEmail } from '../../utils/validateEmail';
+import { ComboboxStyles } from '../combobox/combobox.styled';
+import { TagComponent } from './tag';
 
 type CustomTag = Tag & { email: string; type: 'email' | 'user' };
 
-export const Invite = ({
+export const InviteModal = ({
   isOpen,
   onClose,
 }: {
@@ -30,8 +27,20 @@ export const Invite = ({
   onClose: () => void;
 }) => {
   const [tags, setTags] = useState<CustomTag[]>([]);
-
-  const [suggestions, setSuggestions] = useState<CustomTag[]>([]);
+  const [suggestions, setSuggestions] = useState<CustomTag[]>([
+    {
+      id: '1',
+      email: 'maciej.kowalski@gmail.com',
+      type: 'email',
+      name: 'maciej.kowalski@gmail.com',
+    },
+    {
+      id: '2',
+      email: 'maciej.kowalski@gmail.com',
+      type: 'user',
+      name: 'maciej.kowalski@gmail.com',
+    },
+  ]);
 
   const reactTags = useRef();
 
@@ -42,11 +51,15 @@ export const Invite = ({
     [tags],
   );
 
+  const handleBlur = () => {
+    reactTags.current && (reactTags.current as any).clearInput();
+  };
+
   const handleAddition = (selectedTag: Tag) => {
     const newTag = suggestions.find(({ id }) => id === selectedTag.id);
     if (newTag) {
       setTags([...tags, newTag]);
-      setSuggestions([]);
+      // setSuggestions([]); TODO: uncomment
     }
   };
 
@@ -90,41 +103,38 @@ export const Invite = ({
                 <ReactTags
                   ref={reactTags as any}
                   tags={tags}
-                  placeholderText="Search names or emails..."
+                  placeholderText={
+                    tags.length > 0 ? '' : 'Search names or emails...'
+                  }
                   minQueryLength={1}
+                  onBlur={handleBlur}
                   suggestions={suggestions}
                   suggestionsFilter={() => true}
                   onDelete={handleDelete}
                   onAddition={handleAddition as any}
-                  onInput={debouncedHandleInputChange}
-                  suggestionComponent={({ item, query }) => {
+                  // onInput={debouncedHandleInputChange}
+                  tagComponent={({ tag }) => {
+                    const customItem = tag as CustomTag;
+                    return (
+                      <TagComponent type={customItem.type}>
+                        {customItem.name}
+                      </TagComponent>
+                    );
+                  }}
+                  suggestionComponent={({ item }) => {
                     const customItem = item as CustomTag;
                     return (
-                      <Box
-                        display="inline-block"
-                        border="brand.secondary"
-                        borderRadius="10px"
-                        fontSize="sm"
-                        width="100%"
-                      >
-                        {customItem.type === 'email' ? (
-                          <EmailIcon />
-                        ) : (
-                          <Avatar
-                            name={customItem.name}
-                            bg="brand.secondary"
-                            size={'xs'}
-                          />
-                        )}
-
+                      <TagComponent type={customItem.type}>
                         {customItem.name}
-                      </Box>
+                      </TagComponent>
                     );
                   }}
                 />
               </ComboboxStyles>
             </Flex>
-            <Button variant="primary">Invite</Button>
+            <Button variant="primary" disabled={tags.length < 1}>
+              Invite
+            </Button>
           </Flex>
         </ModalBody>
       </ModalContent>
