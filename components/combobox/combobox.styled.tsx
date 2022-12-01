@@ -43,6 +43,7 @@ export const ComboboxStyles: React.FC<Props> = ({ children }) => (
         /* shared font styles */
         fontSize: '1em',
         lineHeight: '1.2',
+        color: 'var(--chakra-colors-grey-700)',
         /* clicking anywhere will focus the input */
         cursor: 'text',
 

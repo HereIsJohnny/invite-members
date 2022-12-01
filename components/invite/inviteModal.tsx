@@ -15,7 +15,8 @@ import { v4 as uuidv4 } from 'uuid';
 import { getUsers } from '../../services/userService';
 import { validateEmail } from '../../utils/validateEmail';
 import { ComboboxStyles } from '../combobox/combobox.styled';
-import { TagComponent } from './tag';
+import { SuggestionComponent } from './components/suggestion';
+import { TagComponent } from './components/tag';
 
 type CustomTag = Tag & { email: string; type: 'email' | 'user' };
 
@@ -28,18 +29,18 @@ export const InviteModal = ({
 }) => {
   const [tags, setTags] = useState<CustomTag[]>([]);
   const [suggestions, setSuggestions] = useState<CustomTag[]>([
-    {
-      id: '1',
-      email: 'maciej.kowalski@gmail.com',
-      type: 'email',
-      name: 'maciej.kowalski@gmail.com',
-    },
-    {
-      id: '2',
-      email: 'maciej.kowalski@gmail.com',
-      type: 'user',
-      name: 'maciej.kowalski@gmail.com',
-    },
+    // {
+    //   id: '1',
+    //   email: 'maciej.kowalski@gmail.com',
+    //   type: 'email',
+    //   name: 'maciej.kowalski@gmail.com',
+    // },
+    // {
+    //   id: '2',
+    //   email: 'maciej.kowalski@gmail.com',
+    //   type: 'user',
+    //   name: 'maciej.kowalski@gmail.com',
+    // },
   ]);
 
   const reactTags = useRef();
@@ -59,7 +60,7 @@ export const InviteModal = ({
     const newTag = suggestions.find(({ id }) => id === selectedTag.id);
     if (newTag) {
       setTags([...tags, newTag]);
-      // setSuggestions([]); TODO: uncomment
+      setSuggestions([]);
     }
   };
 
@@ -112,7 +113,7 @@ export const InviteModal = ({
                   suggestionsFilter={() => true}
                   onDelete={handleDelete}
                   onAddition={handleAddition as any}
-                  // onInput={debouncedHandleInputChange}
+                  onInput={debouncedHandleInputChange}
                   tagComponent={({ tag }) => {
                     const customItem = tag as CustomTag;
                     return (
@@ -124,9 +125,9 @@ export const InviteModal = ({
                   suggestionComponent={({ item }) => {
                     const customItem = item as CustomTag;
                     return (
-                      <TagComponent type={customItem.type}>
+                      <SuggestionComponent type={customItem.type}>
                         {customItem.name}
-                      </TagComponent>
+                      </SuggestionComponent>
                     );
                   }}
                 />
