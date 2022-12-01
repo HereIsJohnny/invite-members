@@ -77,13 +77,13 @@ export const InviteModal = ({
   );
 
   const handleInputChange = async (input: string) => {
+    setSuggestions([]);
     const isDuplication = tags.some(({ email }) => email === input);
     if (isDuplication) {
       return;
     }
 
-    const isCorrectEmail = validateEmail(input);
-    if (isCorrectEmail) {
+    if (validateEmail(input)) {
       setSuggestions([
         { id: uuidv4(), name: input, email: input, type: 'email' },
       ]);
@@ -91,13 +91,13 @@ export const InviteModal = ({
 
     try {
       const userResponse = await getUsers(input);
-      const filteredResponse = userResponse.filter(
+      const notSelectedUsers = userResponse.filter(
         user => !tags.some(({ id }) => id === user.id),
       );
 
-      // TODO: we should leave emails here !!
-
-      setSuggestions([...filteredResponse]);
+      if (notSelectedUsers.length > 0) {
+        setSuggestions(notSelectedUsers);
+      }
     } catch (e) {
       console.log('logging to the sentry', e);
     }

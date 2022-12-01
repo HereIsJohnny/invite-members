@@ -1,5 +1,5 @@
 import { Avatar, Box } from '@chakra-ui/react';
-import { EmailIcon } from '../emailIcon';
+import { EmailIcon } from './emailIcon';
 
 type Props = {
   children?: string;

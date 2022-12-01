@@ -1,5 +1,5 @@
 import { Avatar, Box, Button } from '@chakra-ui/react';
-import { EmailIcon } from '../emailIcon';
+import { EmailIcon } from './emailIcon';
 
 type Props = {
   children?: string;
@@ -7,7 +7,7 @@ type Props = {
   onRemove: () => void;
 };
 
-// TODO: Suggestion should accept chakra props inline
+// TODO: Tags should accept chakra props inline
 export const TagComponent: React.FC<Props> = ({ children, type, onRemove }) => {
   return (
     <Box
