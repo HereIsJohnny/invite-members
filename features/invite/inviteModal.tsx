@@ -9,16 +9,17 @@ import {
   Text,
 } from '@chakra-ui/react';
 import debounce from 'lodash.debounce';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
 import ReactTags, { Tag } from 'react-tag-autocomplete';
 import { v4 as uuidv4 } from 'uuid';
 import { getUsers } from '../../services/userService';
 import { validateEmail } from '../../utils/validateEmail';
-import { ComboboxStyles } from '../combobox/combobox.styled';
+import { ComboboxStyles } from '../../components/combobox/combobox.styled';
 import { SuggestionComponent } from './components/suggestion';
 import { TagComponent } from './components/tag';
 
 type CustomTag = Tag & { email: string; type: 'email' | 'user' };
+type Suggestion = CustomTag;
 
 export const InviteModal = ({
   isOpen,
@@ -27,8 +28,9 @@ export const InviteModal = ({
   isOpen: boolean;
   onClose: () => void;
 }) => {
+  const reactTags = useRef();
   const [tags, setTags] = useState<CustomTag[]>([]);
-  const [suggestions, setSuggestions] = useState<CustomTag[]>([
+  const [suggestions, setSuggestions] = useState<Suggestion[]>([
     // {
     //   id: '1',
     //   email: 'maciej.kowalski@gmail.com',
@@ -43,8 +45,6 @@ export const InviteModal = ({
     // },
   ]);
 
-  const reactTags = useRef();
-
   const handleDelete = useCallback(
     (tagIndex: number) => {
       setTags(tags.filter((_, i) => i !== tagIndex));
@@ -52,40 +52,59 @@ export const InviteModal = ({
     [tags],
   );
 
-  const handleBlur = () => {
-    reactTags.current && (reactTags.current as any).clearInput();
-  };
+  const handleDeleteById = useCallback(
+    (idToDelete: string) => {
+      setTags(tags.filter(({ id }) => id !== idToDelete));
+    },
+    [tags],
+  );
 
-  const handleAddition = (selectedTag: Tag) => {
-    const newTag = suggestions.find(({ id }) => id === selectedTag.id);
-    if (newTag) {
-      setTags([...tags, newTag]);
+  const handleBlur = useCallback(() => {
+    reactTags.current && (reactTags.current as any).clearInput();
+  }, [reactTags.current]);
+
+  const handleAddition = useCallback(
+    (selectedTag: Tag) => {
+      const customTagToAdd = suggestions.find(
+        ({ id }) => id === selectedTag.id,
+      );
+      if (customTagToAdd) {
+        setTags([...tags, customTagToAdd]);
+      }
       setSuggestions([]);
-    }
-  };
+    },
+    [suggestions, tags],
+  );
 
   const handleInputChange = async (input: string) => {
-    if (tags.some(({ email, id }) => email === input)) {
+    const isDuplication = tags.some(({ email }) => email === input);
+    if (isDuplication) {
       return;
     }
 
-    if (validateEmail(input)) {
-      await setSuggestions([
+    const isCorrectEmail = validateEmail(input);
+    if (isCorrectEmail) {
+      setSuggestions([
         { id: uuidv4(), name: input, email: input, type: 'email' },
       ]);
     }
 
-    const userResponse = await getUsers(input);
-    const filteredResponse = userResponse.filter(
-      user => !tags.some(({ id }) => id === user.id),
-    );
+    try {
+      const userResponse = await getUsers(input);
+      const filteredResponse = userResponse.filter(
+        user => !tags.some(({ id }) => id === user.id),
+      );
 
-    if (userResponse.length > 0) {
+      // TODO: we should leave emails here !!
+
       setSuggestions([...filteredResponse]);
+    } catch (e) {
+      console.log('logging to the sentry', e);
     }
   };
 
-  const debouncedHandleInputChange = debounce(handleInputChange, 200);
+  const debounceHandleInputChange = debounce(handleInputChange, 200);
+
   return (
     <Modal isOpen={isOpen} onClose={onClose} size="xl">
       <ModalOverlay />
@@ -112,12 +131,15 @@ export const InviteModal = ({
                   suggestions={suggestions}
                   suggestionsFilter={() => true}
                   onDelete={handleDelete}
-                  onAddition={handleAddition as any}
-                  onInput={debouncedHandleInputChange}
+                  onAddition={handleAddition}
+                  onInput={debounceHandleInputChange}
                   tagComponent={({ tag }) => {
                     const customItem = tag as CustomTag;
                     return (
-                      <TagComponent type={customItem.type}>
+                      <TagComponent
+                        type={customItem.type}
+                        onRemove={() => handleDeleteById(`${customItem.id}`)}
+                      >
                         {customItem.name}
                       </TagComponent>
                     );

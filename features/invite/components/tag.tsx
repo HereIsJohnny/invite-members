@@ -1,13 +1,14 @@
-import { Avatar, Box } from '@chakra-ui/react';
+import { Avatar, Box, Button } from '@chakra-ui/react';
 import { EmailIcon } from '../emailIcon';
 
 type Props = {
   children?: string;
   type: 'email' | 'user';
+  onRemove: () => void;
 };
 
 // TODO: Suggestion should accept chakra props inline
-export const TagComponent: React.FC<Props> = ({ children, type }) => {
+export const TagComponent: React.FC<Props> = ({ children, type, onRemove }) => {
   return (
     <Box
       display="inline-block"
@@ -26,9 +27,12 @@ export const TagComponent: React.FC<Props> = ({ children, type }) => {
       {type === 'email' ? (
         <EmailIcon mr="6px" />
       ) : (
-        <Avatar name={children} size="xs" bg="red" mr="6px" scale="0.7" />
+        <Avatar mr="6px" name={children} size="xs" bg="red" scale="0.7" />
       )}
       {children}
+      <Box display="inline" p="6px">
+        <button onClick={() => onRemove()}>&#10005;</button>
+      </Box>
     </Box>
   );
 };
