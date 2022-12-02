@@ -3,7 +3,6 @@ import {
   Flex,
   Heading,
   Modal,
-  ModalBody,
   ModalContent,
   ModalOverlay,
   Text,
@@ -12,12 +11,12 @@ import debounce from 'lodash.debounce';
 import { useCallback, useContext, useRef, useState } from 'react';
 import ReactTags, { Tag } from 'react-tag-autocomplete';
 import { v4 as uuidv4 } from 'uuid';
+import { UserContext } from '../../pages';
 import { getUsers } from '../../services/userService';
 import { validateEmail } from '../../utils/validateEmail';
-import { ComboboxStyles } from '../../components/combobox/combobox.styled';
+import { ComboboxStyles } from './components/comboxbox.styled';
 import { SuggestionComponent } from './components/suggestion';
 import { TagComponent } from './components/tag';
-import { UserContext } from '../../pages';
 
 type CustomTag = Tag & { email: string; type: 'email' | 'user' };
 type Suggestion = CustomTag;
@@ -33,6 +32,10 @@ export const InviteModal = ({
   const [tags, setTags] = useState<CustomTag[]>([]);
   const [suggestions, setSuggestions] = useState<Suggestion[]>([]);
   const { setUsers } = useContext(UserContext);
+  const [error, setError] = useState<string>();
+  const [submitStatus, setSubmitStatus] = useState<
+    'idle' | 'processing' | 'success'
+  >('idle');
 
   const handleDelete = useCallback(
     (tagIndex: number) => {
@@ -67,8 +70,11 @@ export const InviteModal = ({
 
   const handleInputChange = async (input: string) => {
     setSuggestions([]);
+    let _error: string = '';
     const isDuplication = tags.some(({ email }) => email === input);
     if (isDuplication) {
+      _error = 'User already added';
+      setError(_error);
       return;
     }
 
@@ -88,13 +94,20 @@ export const InviteModal = ({
         setSuggestions(notSelectedUsers);
       }
     } catch (e) {
+      _error = 'We have temporary issues. Fill out the email again, please!';
       console.log('logging to the sentry', e);
     }
+
+    setError(_error);
   };
 
-  const handleSubmit = (e: React.SyntheticEvent) => {
+  const handleSubmit = async (e: React.SyntheticEvent) => {
+    setSubmitStatus('processing');
     e.preventDefault();
     setUsers(tags.map(tag => ({ ...tag, id: `${tag.id}` })));
+    await new Promise(res => setTimeout(res, 200));
+    setSubmitStatus('success');
+    await new Promise(res => setTimeout(res, 400));
     setTags([]);
     onClose();
   };
@@ -105,7 +118,7 @@ export const InviteModal = ({
     <Modal isOpen={isOpen} onClose={onClose} size="xl">
       <ModalOverlay />
       <ModalContent bg="darkBlue" p={16}>
-        <Heading mb={8} fontSize="1.5rem" textAlign="center">
+        <Heading mb={8} fontSize="1.5rem" textAlign="center" fontWeight={400}>
           Invite members
         </Heading>
         <Text mb={4}>Email invite</Text>
@@ -113,14 +126,19 @@ export const InviteModal = ({
           Send members as email invitation to join this workspace
         </Text>
         <form onSubmit={handleSubmit}>
-          <Flex flexDirection="row" gap={4}>
+          <Flex
+            flexDirection="row"
+            gap={4}
+            alignItems="center"
+            justifyContent="space-between"
+          >
             <ComboboxStyles>
               <ReactTags
                 ref={reactTags as any}
                 tags={tags}
                 suggestions={suggestions}
                 minQueryLength={1}
-                // onBlur={handleBlur}
+                onBlur={handleBlur}
                 suggestionsFilter={() => true}
                 onDelete={handleDelete}
                 onAddition={handleAddition}
@@ -148,10 +166,16 @@ export const InviteModal = ({
               />
             </ComboboxStyles>
 
-            <Button variant="primary" disabled={tags.length < 1} type="submit">
-              Invite
+            <Button
+              variant="primary"
+              disabled={tags.length < 1 || submitStatus === 'processing'}
+              type="submit"
+              isLoading={submitStatus === 'processing'}
+            >
+              {submitStatus === 'success' ? 'Done' : 'Invite'}
             </Button>
           </Flex>
+          {error ? <Text mt={2}>{error}</Text> : <></>}
         </form>
       </ModalContent>
     </Modal>

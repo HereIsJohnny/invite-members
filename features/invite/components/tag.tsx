@@ -23,6 +23,7 @@ export const TagComponent: React.FC<Props> = ({ children, type, onRemove }) => {
       py={1.5}
       mr="6px"
       mb="6px"
+      cursor="default"
     >
       {type === 'email' ? (
         <EmailIcon mr="6px" />

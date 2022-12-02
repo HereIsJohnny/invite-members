@@ -33,7 +33,7 @@ type Props = {
 export const ComboboxStyles: React.FC<Props> = ({ children }) => (
   <Box
     width="100%"
-    maxWidth="100%"
+    maxWidth="347px"
     sx={{
       '.react-tags': {
         position: 'relative',
@@ -74,6 +74,8 @@ export const ComboboxStyles: React.FC<Props> = ({ children }) => (
 
           /* prevent autoresize overflowing the container */
           maxWidth: '100%',
+          /* fix safari input width bug */
+          width: '100%!important',
 
           /* remove styles and layout from this element */
           margin: '0',
