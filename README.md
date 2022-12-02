@@ -1,7 +1,5 @@
 ## Hi 👋 Thomas, Hi Darius 👋.
 
-https://app.claap.io/magic-smith/invite-users-c-e_WRmMkoXs-b-DfEvEALuu9
-
 To run the project on your local.
 
 ```bash
