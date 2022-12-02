@@ -49,7 +49,7 @@ export default function Home() {
         </Center>
       </main>
       <UserContext.Provider value={{ setUsers }}>
-        {isOpen && <InviteModal isOpen={isOpen} onClose={onClose} />}
+        {isOpen && <InviteModal isOpen onClose={onClose} />}
       </UserContext.Provider>
     </div>
   );
